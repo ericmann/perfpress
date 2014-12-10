@@ -1,0 +1,12 @@
+{
+	"name": "wp-cli/perfpress",
+	"description": "Test the relative performance of various permalink structures",
+	"homepage": "https://github.com/ericmann/perfpress",
+	"license": "MIT",
+	"require": {
+		"php": ">=5.4"
+	},
+	"autoload": {
+		"files": [ "perfpress.php" ]
+	}
+}
