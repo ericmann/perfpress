@@ -25,15 +25,16 @@ class PerfPress_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp perfpress test
-	 *     wp perfpress test --posts=1000
+	 *     wp perfpress parse_request
+	 *     wp perfpress parse_request --posts=1000
 	 *
 	 * @synopsis [--posts=<count>]
+	 * @alias pr
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
 	 */
-	public function test( $args, $assoc_args ) {
+	public function parse_request( $args, $assoc_args ) {
 		$post_count = isset( $assoc_args['posts'] ) ? (int) $assoc_args['posts'] : 1000;
 
 		$this->setup( $post_count );
