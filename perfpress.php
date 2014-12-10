@@ -23,27 +23,36 @@ class PerfPress_Command extends WP_CLI_Command {
 	 * [--posts=<count>]
 	 * : Number of posts to test with in the database
 	 *
+	 * [--pages]
+	 * Whether or not to create an equivalent number of pages for testing
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     wp perfpress parse_request
 	 *     wp perfpress parse_request --posts=1000
+	 *     wp perfpress parse_request --pages
 	 *
-	 * @synopsis [--posts=<count>]
+	 * @synopsis [--posts=<count>] [--pages]
 	 * @alias pr
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
 	 */
 	public function parse_request( $args, $assoc_args ) {
+		$pages = isset( $assoc_args['pages'] );
 		$post_count = isset( $assoc_args['posts'] ) ? (int) $assoc_args['posts'] : 1000;
 
-		$this->setup( $post_count );
+		$this->setup( $post_count, $pages );
+		$real_count = wp_count_posts( 'post' );
+		$real_count = $real_count->publish;
+		$page_count = wp_count_posts( 'page' );
+		$page_count = $page_count->publish;
 
 		// Get a post at random
 		$posts = get_posts( array( 'posts_per_page' => 1, 'orderby' => 'rand' ) );
 		$post = $posts[0];
 
-		WP_CLI::line( sprintf( 'Testing with post #%s... (selected at random from %s posts)', $post->ID, $post_count ) );
+		WP_CLI::line( sprintf( 'Testing with post #%s... (selected at random from %s posts)', $post->ID, $real_count ) );
 
 		$results = array();
 		foreach( $this->permastructs as $label => $permastruct ) {
@@ -59,7 +68,7 @@ class PerfPress_Command extends WP_CLI_Command {
 		}
 
 		// Print a headline
-		WP_CLI::line( sprintf( 'Performance test with %s posts:', $post_count ) );
+		WP_CLI::line( sprintf( 'Performance test with %s posts and %s pages:', $real_count, $page_count ) );
 		WP_CLI::line();
 		WP_CLI::line( "Permastruct:\tLoad time" );
 
@@ -113,9 +122,10 @@ class PerfPress_Command extends WP_CLI_Command {
 	/**
 	 * Set up the database environment with a certain number of posts
 	 *
-	 * @param array $count Number of posts with which to populate the database
+	 * @param array $count     Number of posts with which to populate the database
+	 * @param bool  $add_pages Flag whether or not to add pages in addition to posts
 	 */
-	protected function setup( $count ) {
+	protected function setup( $count, $add_pages ) {
 		global $wpdb;
 		$wpdb->suppress_errors = false;
 		$wpdb->show_errors = true;
@@ -137,6 +147,12 @@ class PerfPress_Command extends WP_CLI_Command {
 			);
 
 			wp_insert_post( $post );
+
+			if ( $add_pages ) {
+				$post['post_type'] = 'page';
+
+				wp_insert_post( $post );
+			}
 		}
 	}
 
