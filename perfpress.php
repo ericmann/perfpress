@@ -7,13 +7,13 @@ if ( ! defined( 'WP_CLI' ) ) return;
  */
 class PerfPress_Command extends WP_CLI_Command {
 
-	protected $permastructs = array(
+	protected $permastructs = [
 		'Default'        => '',
 		'Day and Name'   => '/%year%/%monthnum%/%day%/%postname%/',
 		'Month and Name' => '/%year%/%monthnum%/%postname%/',
 		'Numeric'        => '/archives/%post_id%',
 		'Post Name'      => '/%postname%/',
-	);
+	];
 
 	/**
 	 * Run the tests
@@ -49,12 +49,12 @@ class PerfPress_Command extends WP_CLI_Command {
 		$page_count = $page_count->publish;
 
 		// Get a post at random
-		$posts = get_posts( array( 'posts_per_page' => 1, 'orderby' => 'rand' ) );
+		$posts = get_posts( [ 'posts_per_page' => 1, 'orderby' => 'rand' ] );
 		$post = $posts[0];
 
 		WP_CLI::line( sprintf( 'Testing with post #%s... (selected at random from %s posts)', $post->ID, $real_count ) );
 
-		$results = array();
+		$results = [];
 		foreach( $this->permastructs as $label => $permastruct ) {
 			$this->set_permalinks( $permastruct );
 
@@ -138,13 +138,13 @@ class PerfPress_Command extends WP_CLI_Command {
 
 		// Create a bunch of posts
 		for ( $i = 0; $i < $count; $i ++ ) {
-			$post = array(
+			$post = [
 				'post_status'  => 'publish',
 				'post_title'   => sprintf( 'Post title %s', $i ),
 				'post_content' => sprintf( 'Post context %s', $i ),
 				'post_excerpt' => sprintf( 'Post excerpt %s', $i ),
 				'post_type'    => 'post',
-			);
+			];
 
 			wp_insert_post( $post );
 
