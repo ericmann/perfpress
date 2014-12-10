@@ -43,6 +43,8 @@ class PerfPress_Command extends WP_CLI_Command {
 		$posts = get_posts( array( 'posts_per_page' => 1, 'orderby' => 'rand' ) );
 		$post = $posts[0];
 
+		WP_CLI::line( sprintf( 'Testing with post #%s... (selected at random from %s posts)', $post->ID, $post_count ) );
+
 		$results = array();
 		foreach( $this->permastructs as $label => $permastruct ) {
 			$this->set_permalinks( $permastruct );
