@@ -357,6 +357,7 @@ class PerfPress_Command extends WP_CLI_Command {
 
 			// Next page
 			$page += 1;
+			unset( $query );
 		} while ( $count );
 
 		$progress->finish();
